@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BizBuddy — Business Idea Suggestor</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--muted:#94a3b8;--accent:#60a5fa;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Arial,Helvetica,sans-serif}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#071233 0%, #081226 60%);color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:28px}
+    .container{width:980px;max-width:100%;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:14px;padding:22px;box-shadow:0 6px 30px rgba(2,6,23,.6);}
+    header{display:flex;align-items:center;gap:16px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7dd3fc);display:flex;align-items:center;justify-content:center;color:#021124;font-weight:700;font-size:18px}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 18px;color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:18px}
+    .card{background:var(--card);padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    .question{margin-bottom:12px}
+    label{display:block;font-weight:600;margin-bottom:8px}
+    select,input[type='text'],input[type='number'],textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);cursor:pointer;user-select:none}
+    .chip.active{background:linear-gradient(90deg,var(--accent),#34d399);color:#021124;border:0}
+    .btn{padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#38bdf8);cursor:pointer;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}
+    .result-list{display:flex;flex-direction:column;gap:10px}
+    .idea{padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+    .meta{font-size:13px;color:var(--muted);margin-top:8px}
+    .small{font-size:12px;color:var(--muted)}
+    footer{margin-top:16px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .save-btn{background:transparent;border:1px dashed rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr;}.container{padding:14px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">BB</div>
+      <div>
+        <h1>BizBuddy — Business Idea Suggestor</h1>
+        <p class="lead">Answer a few quick questions and get 2–3 business ideas that match your budget, skills and lifestyle.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="quiz">
+        <div class="question">
+          <label>1) How much investment can you start with?</label>
+          <div class="chips" id="investment">
+            <div class="chip" data-value="low">Low &lt; ₹20,000</div>
+            <div class="chip" data-value="medium">Medium ₹20k–1L</div>
+            <div class="chip" data-value="high">High &gt; ₹1L</div>
+          </div>
+        </div>
+
+        <div class="question">
+          <label>2) Which skill fits you best? (choose one)</label>
+          <div class="chips" id="skill">
+            <div class="chip" data-value="tech">Tech (web, apps)</div>
+            <div class="chip" data-value="cooking">Cooking / Food</div>
+            <div class="chip" data-value="marketing">Communication / Sales</div>
+            <div class="chip" data-value="crafts">Handmade / Crafts</div>
+            <div class="chip" data-value="management">Management / Retail</div>
+          </div>
+        </div>
+
+        <div class="question">
+          <label>3) Online, Offline or Both?</label>
+          <div class="chips" id="mode">
+            <div class="chip" data-value="online">Online</div>
+            <div class="chip" data-value="offline">Offline</div>
+            <div class="chip" data-value="both">Both</div>
+          </div>
+        </div>
+
+        <div class="question">
+          <label>4) Do you prefer to work alone or with a team?</label>
+          <div class="chips" id="team">
+            <div class="chip" data-value="solo">Alone</div>
+            <div class="chip" data-value="team">With team</div>
+          </div>
+        </div>
+
+        <div class="question">
+          <label>5) How much time can you commit per day?</label>
+          <select id="time">
+            <option value="1">Less than 2 hours</option>
+            <option value="3">2–4 hours</option>
+            <option value="6">4–8 hours</option>
+            <option value="8">Full time (8+ hours)</option>
+          </select>
+        </div>
+
+        <div class="question">
+          <label>6) Risk preference</label>
+          <div class="chips" id="risk">
+            <div class="chip" data-value="low">Low risk</div>
+            <div class="chip" data-value="medium">Moderate</div>
+            <div class="chip" data-value="high">High risk / High reward</div>
+          </div>
+        </div>
+
+        <div class="question">
+          <label>7) Quick note about your interests (optional)</label>
+          <input type="text" id="note" placeholder="e.g. love baking, like teaching, enjoy coding" />
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn" id="suggestBtn">Suggest Ideas</button>
+          <button class="save-btn" id="clearBtn">Clear Saved Results</button>
+        </div>
+
+        <div class="small" style="margin-top:10px">Tip: Use the optional note to refine suggestions (keywords are matched).</div>
+      </section>
+
+      <aside class="card" id="results">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Suggested ideas</strong>
+          <div class="muted" id="lastSaved">No saved result</div>
+        </div>
+
+        <div class="result-list" id="ideasList" style="margin-top:12px">
+          <div class="muted">No suggestions yet — answer the questions and click <strong>Suggest Ideas</strong>.</div>
+        </div>
+
+        <footer>
+          <div class="small">You can save results to your browser.</div>
+          <div style="display:flex;gap:8px">
+            <button class="save-btn" id="saveResult">Save Result</button>
+            <button class="save-btn" id="exportBtn">Export JSON</button>
+          </div>
+        </footer>
+      </aside>
+    </div>
+
+  </div>
+
+  <script>
+    // --- ideas database ---
+    const IDEAS = [
+      {id:'social_marketing', title:'Social Media Marketing Service', tags:['marketing','online','low'], invest:'Low', difficulty:'Easy', time:'2–6 hrs/day', earnings:'₹10k–₹50k/mo', desc:'Start by helping local shops create content and ads.', steps:["Learn basics of social media marketing","Make 3 demo posts","Approach 5 local clients"]},
+      {id:'freelance_web', title:'Freelance Web Designing', tags:['tech','online','low'], invest:'Low', difficulty:'Moderate', time:'2–8 hrs/day', earnings:'₹15k–₹80k/mo', desc:'Design simple websites for small businesses.', steps:["Learn basic HTML/CSS/JS","Build 3 sample sites","List on freelance platforms"]},
+      {id:'cloud_kitchen', title:'Cloud Kitchen / Tiffin Service', tags:['cooking','offline','medium'], invest:'Medium', difficulty:'Moderate', time:'6–10 hrs/day', earnings:'₹20k–₹1L/mo', desc:'Home-based food delivery targeting office lunches.', steps:["Test 5 dishes","Set pricing","Start delivery on phone+WhatsApp"]},
+      {id:'handmade_shop', title:'Handmade Crafts Shop (Online)', tags:['crafts','online','low'], invest:'Low', difficulty:'Easy', time:'1–4 hrs/day', earnings:'₹5k–₹40k/mo', desc:'Create and sell handmade items on marketplaces.', steps:["Make 10 products","Photograph them","List on Etsy/Local marketplaces"]},
+      {id:'tutoring', title:'Online Tutoring / Coaching', tags:['management','online','low'], invest:'Low', difficulty:'Easy', time:'2–4 hrs/day', earnings:'₹10k–₹60k/mo', desc:'Teach subjects or skills you know.', steps:["Decide subjects","Set hourly rate","Promote on social media"]},
+      {id:'retail_store', title:'Small Retail / Kirana Store', tags:['management','offline','high'], invest:'High', difficulty:'Moderate', time:'8+ hrs/day', earnings:'₹20k–₹1.5L/mo', desc:'Neighborhood grocery shop with good margins.', steps:["Find location","Arrange suppliers","Open shop and market locally"]},
+      {id:'ecommerce', title:'Niche E-commerce Store', tags:['tech','online','medium'], invest:'Medium', difficulty:'Moderate', time:'3–8 hrs/day', earnings:'₹20k–₹2L+/mo', desc:'Sell niche products online (e.g., pet supplies).', steps:["Choose niche","Source products","Run small ads"]},
+      {id:'event_planning', title:'Small Event / Party Planner', tags:['management','offline','medium'], invest:'Medium', difficulty:'Moderate', time:'Varies', earnings:'₹15k–₹1L+/event', desc:'Plan birthday parties, small events in your city.', steps:["Make a portfolio","Partner with vendors","Promote locally"]}
+    ];
+
+    // Select single-select chips in a container (works for mouse/touch)
+    function wireChips(containerId){
+      const c = document.getElementById(containerId);
+      // click and tap support
+      c.addEventListener('click', e => {
+        const chip = e.target.closest('.chip');
+        if(!chip) return;
+        // if already active, toggle off (optional)
+        const isActive = chip.classList.contains('active');
+        [...c.querySelectorAll('.chip')].forEach(x=>x.classList.remove('active'));
+        if(!isActive) chip.classList.add('active');
+      });
+
+      // keyboard accessibility: allow arrow navigation + enter
+      c.addEventListener('keydown', e => {
+        const focusable = Array.from(c.querySelectorAll('.chip'));
+        if(!focusable.length) return;
+        const activeIndex = focusable.findIndex(ch => ch === document.activeElement);
+        if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){ e.preventDefault(); const next = focusable[(activeIndex+1)%focusable.length]; next.focus(); }
+        if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ e.preventDefault(); const prev = focusable[(activeIndex-1+focusable.length)%focusable.length]; prev.focus(); }
+        if(e.key === 'Enter'){ e.preventDefault(); document.activeElement.click(); }
+      });
+      // make chips focusable
+      c.querySelectorAll('.chip').forEach(ch => ch.setAttribute('tabindex','0'));
+    }
+    ['investment','skill','mode','team','risk'].forEach(wireChips);
+
+    function getSelected(containerId){
+      const c = document.getElementById(containerId);
+      const a = c.querySelector('.chip.active');
+      return a ? a.dataset.value : null;
+    }
+
+    // scoring logic
+    function matchScore(answers, idea){
+      let score = 0;
+      // investment match by simple mapping
+      if(answers.investment){
+        if(answers.investment === 'low' && idea.invest === 'Low') score += 3;
+        if(answers.investment === 'medium' && idea.invest === 'Medium') score += 3;
+        if(answers.investment === 'high' && idea.invest === 'High') score += 3;
+      }
+      // skill match via tags
+      if(answers.skill && idea.tags.includes(answers.skill)) score += 4;
+      // mode match
+      if(answers.mode){
+        if(answers.mode === 'both') score += 2;
+        else if(idea.tags.includes(answers.mode)) score += 2;
+      }
+      // team preference
+      if(answers.team){
+        if(answers.team === 'solo' && idea.difficulty === 'Easy') score += 1;
+        if(answers.team === 'team' && idea.difficulty !== 'Easy') score += 1;
+      }
+      // time
+      const timeNum = Number(answers.time);
+      if(timeNum >= 6 && (idea.time.includes('8') || idea.time.includes('6'))) score += 2;
+      if(timeNum <= 3 && idea.difficulty === 'Easy') score += 1;
+      // risk
+      if(answers.risk){
+        if(answers.risk === 'high' && idea.earnings && idea.earnings.includes('+')) score += 1;
+      }
+      // note keyword boost (simple)
+      if(answers.note){
+        const note = answers.note.toLowerCase();
+        if(note.split(/\s+/).some(w => w && idea.title.toLowerCase().includes(w))) score += 3;
+        if(note.split(/\s+/).some(w => w && idea.desc.toLowerCase().includes(w))) score += 2;
+      }
+      return score;
+    }
+
+    function suggest(answers){
+      const scored = IDEAS.map(idea => ({idea, score: matchScore(answers, idea)}));
+      scored.sort((a,b) => b.score - a.score);
+      // take top 3 with positive score, else best 2
+      const filtered = scored.filter(s => s.score > 0);
+      const pick = filtered.length ? filtered.slice(0,3) : scored.slice(0,2);
+      return pick.map(s => s.idea);
+    }
+
+    function renderIdeas(ideas){
+      const out = document.getElementById('ideasList'); out.innerHTML = '';
+      if(!ideas.length){
+        out.innerHTML = '<div class="muted">No suggestions found.</div>';
+        return;
+      }
+      ideas.forEach(it => {
+        const div = document.createElement('div'); div.className = 'idea';
+        div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><strong>${it.title}</strong><span class="small">${it.invest}</span></div>
+          <div class="muted">${it.desc}</div>
+          <div class="meta">Investment: ${it.invest} • Difficulty: ${it.difficulty} • Time: ${it.time} • Expected: ${it.earnings}</div>
+          <details style="margin-top:8px"><summary class="small">Steps to start</summary><ol>${it.steps.map(s=>'<li>'+s+'</li>').join('')}</ol></details>`;
+        out.appendChild(div);
+      });
+    }
+
+    document.getElementById('suggestBtn').addEventListener('click', () => {
+      const answers = {
+        investment: getSelected('investment'),
+        skill: getSelected('skill'),
+        mode: getSelected('mode'),
+        team: getSelected('team'),
+        time: document.getElementById('time').value,
+        risk: getSelected('risk'),
+        note: document.getElementById('note').value.trim()
+      };
+      // quick validation: at least skill and investment recommended
+      if(!answers.skill || !answers.investment){
+        // still allow, but warn
+        // comment this alert out to avoid pausing demo
+        // alert('Try to select at least an investment level and a skill for better suggestions.');
+      }
+      const ideas = suggest(answers);
+      renderIdeas(ideas);
+      window._LAST = {answers, ideas};
+    });
+
+    document.getElementById('saveResult').addEventListener('click', () => {
+      if(!window._LAST){ alert('No result to save — suggest ideas first.'); return; }
+      const store = JSON.parse(localStorage.getItem('bizbuddy_saves') || '[]');
+      store.unshift({time: new Date().toISOString(), data: window._LAST});
+      localStorage.setItem('bizbuddy_saves', JSON.stringify(store));
+      updateLastSaved();
+      alert('Result saved locally in your browser.');
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      if(!window._LAST){ alert('No result to export — suggest ideas first.'); return; }
+      const blob = new Blob([JSON.stringify(window._LAST, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'bizbuddy-result.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if(confirm('Clear all saved results from this browser?')){ localStorage.removeItem('bizbuddy_saves'); updateLastSaved(); alert('Saved results cleared.'); }
+    });
+
+    function updateLastSaved(){
+      const store = JSON.parse(localStorage.getItem('bizbuddy_saves') || '[]');
+      const txt = store.length ? ('Saved '+store.length+' result(s) — last: '+new Date(store[0].time).toLocaleString()) : 'No saved result';
+      document.getElementById('lastSaved').textContent = txt;
+    }
+
+    // init
+    updateLastSaved();
+
+    // quick demo: allow pressing Enter on note to suggest
+    document.getElementById('note').addEventListener('keydown', e => { if(e.key === 'Enter'){ document.getElementById('suggestBtn').click(); } });
+  </script>
+</body>
+</html>
